@@ -222,6 +222,52 @@ func (p *PhoneGen) RandomMobileE164(limit int, countryCode string) ([]string, er
 	return phones, nil
 }
 
+func (p *PhoneGen) RandomMobileWithMask(limit int) []string {
+	src := rand.NewSource(time.Now().UnixNano())
+	rnd := rand.New(src)
+
+	phones := []string{}
+
+	// Generate and print random phone numbers
+	for i := 0; i < limit; i++ {
+		// get a random area code
+		ac := randomAreaCode(rnd)
+
+		mobile := fmt.Sprintf("%s9%s", ac, randomDigits(rnd, 8))
+
+		phones = append(phones, applyMask(mobile))
+
+	}
+
+	return phones
+}
+
+func (p *PhoneGen) RandomLandlineWithMask(limit int) []string {
+	src := rand.NewSource(time.Now().UnixNano())
+	rnd := rand.New(src)
+
+	phones := []string{}
+
+	// Generate and print random phone numbers
+	for i := 0; i < limit; i++ {
+		// get a random area code
+		ac := randomAreaCode(rnd)
+
+		// for landline, get a random number pattern
+		pattern, err := getNumberPattern(ac)
+		if err != nil {
+			panic(err)
+		}
+
+		landline := fmt.Sprintf("%s%s%s", ac, pattern, randomDigits(rnd, 7))
+
+		phones = append(phones, applyMask(landline))
+
+	}
+
+	return phones
+}
+
 func generateRandomPhoneNumber(rnd *rand.Rand) string {
 	// get a random area code
 	ac := randomAreaCode(rnd)
